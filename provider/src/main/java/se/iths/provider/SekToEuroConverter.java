@@ -7,7 +7,7 @@ public class SekToEuroConverter implements CurrencyConverter {
     public String convert(double amount) {
         double exchangeRate = 0.085;
         double eurAmount = amount * exchangeRate;
-        return amount + " SEK is ~" + eurAmount + " Euro";
+        return String.format(amount + " SEK is ~" + "%.2f Euro", eurAmount);
     }
 
     @Override

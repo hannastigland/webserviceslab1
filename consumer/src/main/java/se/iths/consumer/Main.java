@@ -2,6 +2,7 @@ package se.iths.consumer;
 
 import se.iths.service.CurrencyConverter;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.ServiceLoader;
 
@@ -10,8 +11,6 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         ServiceLoader<CurrencyConverter> loader = ServiceLoader.load(CurrencyConverter.class);
-
-
 
         boolean running = true;
         while (running) {
@@ -29,7 +28,6 @@ public class Main {
     }
 
     private static void chooseConverterAndConvert(Scanner sc, ServiceLoader<CurrencyConverter> loader) {
-        // Visa tillgängliga konverterare
         int converterIndex = 1;
         System.out.println("Choose what currency you want to convert from:");
         for (CurrencyConverter converter : loader) {
@@ -37,8 +35,18 @@ public class Main {
             converterIndex++;
         }
 
-        // Läs användarens val av konverterare
-        int chosenConverterIndex = sc.nextInt();
+        int chosenConverterIndex;
+        while (true) {
+            System.out.println("Enter your choice:");
+            try {
+                chosenConverterIndex = sc.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter 1 (SEK) or 2 (Euro).");
+                sc.next();
+            }
+        }
+
         CurrencyConverter chosenConverter = null;
         int currentIndex = 1;
         for (CurrencyConverter converter : loader) {
@@ -49,21 +57,27 @@ public class Main {
             currentIndex++;
         }
 
-        // Utför konvertering
         if (chosenConverter != null) {
             performConversion(sc, chosenConverter);
         } else {
-            System.out.println("Invalid converter choice.");
+            System.out.println("Invalid amount.");
         }
     }
 
     private static void performConversion(Scanner sc, CurrencyConverter converter) {
-        // Läs in belopp från användaren
-        System.out.println("Insert amount:");
-        double amount = sc.nextDouble();
+        while (true) {
+            try {
+                System.out.println("Insert your amount:");
+                double amount = sc.nextDouble();
 
-        // Utför konvertering med vald konverterare
-        String result = converter.convert(amount);
-        System.out.println(result);
+                String result = converter.convert(amount);
+                System.out.println(result);
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                sc.next();
+            }
+        }
     }
+
 }
