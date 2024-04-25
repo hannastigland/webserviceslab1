@@ -9,4 +9,9 @@ public class SekToEuroConverter implements CurrencyConverter {
         double eurAmount = amount * exchangeRate;
         return amount + " SEK is ~" + eurAmount + " Euro";
     }
+
+    @Override
+    public String currencyName() {
+        return "SEK";
+    }
 }

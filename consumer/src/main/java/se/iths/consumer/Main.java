@@ -11,56 +11,59 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         ServiceLoader<CurrencyConverter> loader = ServiceLoader.load(CurrencyConverter.class);
 
-        boolean exit = false;
 
-        while (!exit) {
-            System.out.println("Welcome to the currency converter!");
-            System.out.println("Choose an option:");
-            System.out.println("1. Convert from SEK to Euro");
-            System.out.println("2. Convert from Euro to SEK");
-            System.out.println("3. Exit");
 
-            int choice = sc.nextInt();
+        boolean running = true;
+        while (running) {
+            System.out.println("Welcome to the EUR-SEK currency converter!");
+            chooseConverterAndConvert(sc, loader);
 
-            switch (choice) {
-                case 1:
-                    convertToEuro(sc, loader);
-                    break;
-                case 2:
-                    convertToSek(sc, loader);
-                    break;
-                case 3:
-                    exit = true;
-                    System.out.println("Goodbye!");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+            System.out.println("Do you want to convert another currency? (yes/no)");
+            String continueChoice = sc.next();
+
+            if (!continueChoice.equalsIgnoreCase("yes")) {
+                running = false;
+                System.out.println("Good-bye.");
             }
         }
-        
-        
+    }
 
+    private static void chooseConverterAndConvert(Scanner sc, ServiceLoader<CurrencyConverter> loader) {
+        // Visa tillgängliga konverterare
+        int converterIndex = 1;
+        System.out.println("Choose what currency you want to convert from:");
         for (CurrencyConverter converter : loader) {
-            System.out.println(converter.convert(100));
+            System.out.println(converterIndex + ". " + converter.currencyName());
+            converterIndex++;
+        }
+
+        // Läs användarens val av konverterare
+        int chosenConverterIndex = sc.nextInt();
+        CurrencyConverter chosenConverter = null;
+        int currentIndex = 1;
+        for (CurrencyConverter converter : loader) {
+            if (currentIndex == chosenConverterIndex) {
+                chosenConverter = converter;
+                break;
+            }
+            currentIndex++;
+        }
+
+        // Utför konvertering
+        if (chosenConverter != null) {
+            performConversion(sc, chosenConverter);
+        } else {
+            System.out.println("Invalid converter choice.");
         }
     }
 
-    private static void convertToEuro(Scanner sc, ServiceLoader<CurrencyConverter> loader) {
-        System.out.println("Insert amount in SEK: ");
-        double amountSEK = sc.nextDouble();
+    private static void performConversion(Scanner sc, CurrencyConverter converter) {
+        // Läs in belopp från användaren
+        System.out.println("Insert amount:");
+        double amount = sc.nextDouble();
 
-        for (CurrencyConverter converter : loader) {
-            String result = converter.convert(amountSEK);
-            System.out.println(result);
-        }
-    }
-    private static void convertToSek(Scanner sc, ServiceLoader<CurrencyConverter> loader) {
-        System.out.println("Insert amount in Euro:");
-        double amountEur = sc.nextDouble();
-
-        for (CurrencyConverter converter : loader) {
-            String result = converter.convert(amountEur);
-            System.out.println(result);
-        }
+        // Utför konvertering med vald konverterare
+        String result = converter.convert(amount);
+        System.out.println(result);
     }
 }
