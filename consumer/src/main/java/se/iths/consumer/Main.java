@@ -14,7 +14,7 @@ public class Main {
 
         boolean running = true;
         while (running) {
-            System.out.println("Welcome to the EUR-SEK currency converter!");
+            System.out.println("Welcome to the currency converter!");
             chooseConverterAndConvert(sc, loader);
 
             System.out.println("Do you want to convert another currency? (yes/no)");
@@ -42,7 +42,7 @@ public class Main {
                 chosenConverterIndex = sc.nextInt();
                 break;
             } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please enter 1 (SEK) or 2 (Euro).");
+                System.out.println("Invalid input. Please enter a number.");
                 sc.next();
             }
         }
